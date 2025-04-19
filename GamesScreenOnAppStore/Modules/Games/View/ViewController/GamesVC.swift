@@ -1,47 +1,26 @@
 
-
-
 import UIKit
 
-enum GamesSection: Int, CaseIterable {
-    case categoryChips
-    case nowAvaliable
-    case mustPlay
-    case moreGames
-    case appleArcadeGames
-    case topFreeGames
-    case topPaidGames
-    case basedOnYourDownloads
-    case exploreMoreGames
-    case events
-}
-
-final class GamesViewController: UIViewController {
+class GamesViewController: UIViewController {
     
-    private var collectionView: UICollectionView!
+    private var gameCollectionView: UICollectionView!
     
     private let gamesViewModel = GamesViewModel()
-    private let featureViewModel = FeaturedGamesViewModel()
-    private let gamesInfoViewModel = GamesInfoViewModel()
-    private let eventViewModel = EventViewModel()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .systemBackground
-        navigationItem.title = "Games"
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationController?.navigationBar.largeTitleTextAttributes = [
-            .foregroundColor: UIColor.white,
-            .font: UIFont.systemFont(ofSize: 34, weight: .bold)
-        ]
-        
+        setupView()
+        setupNavigationBar()
         configureCollectionView()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.navigationBar.barTintColor = .systemBackground
-        navigationController?.navigationBar.tintColor = .label
+    private func setupView() {
+        view.backgroundColor = .systemBackground
+    }
+    
+    private func setupNavigationBar() {
+        navigationItem.title = "Games"
+        navigationController?.navigationBar.prefersLargeTitles = true
         navigationController?.navigationBar.largeTitleTextAttributes = [
             .foregroundColor: UIColor.label,
             .font: UIFont.systemFont(ofSize: 34, weight: .bold)
@@ -49,23 +28,42 @@ final class GamesViewController: UIViewController {
     }
     
     private func configureCollectionView() {
-        collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createLayout())
-        collectionView.backgroundColor = .black
-        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        
-        collectionView.register(CategoryChipCell.self, forCellWithReuseIdentifier: CategoryChipCell.reuseID)
-        collectionView.register(FeaturedBannerCell.self, forCellWithReuseIdentifier: FeaturedBannerCell.identifier)
-        collectionView.register(GameCell.self, forCellWithReuseIdentifier: GameCell.identifier)
-        collectionView.register(EventCell.self, forCellWithReuseIdentifier: EventCell.identifier)
-        
-        collectionView.register(SectionHeaderView.self,
-                                forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-                                withReuseIdentifier: SectionHeaderView.identifier)
-        
-        collectionView.dataSource = self
-        
-        view.addSubview(collectionView)
+        setupCollectionView()
+        registerCells()
+        registerSupplementaryViews()
+        setupDataSource()
+        addCollectionViewToView()
     }
+    
+    private func setupCollectionView() {
+        gameCollectionView = UICollectionView(frame: view.bounds, collectionViewLayout: createLayout())
+        gameCollectionView.backgroundColor = .systemBackground
+        gameCollectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+    }
+    
+    private func registerCells() {
+        gameCollectionView.register(CategoryChipCell.self, forCellWithReuseIdentifier: CategoryChipCell.reuseID)
+        gameCollectionView.register(FeaturedBannerCell.self, forCellWithReuseIdentifier: FeaturedBannerCell.identifier)
+        gameCollectionView.register(GameCell.self, forCellWithReuseIdentifier: GameCell.identifier)
+        gameCollectionView.register(EventCell.self, forCellWithReuseIdentifier: EventCell.identifier)
+    }
+    
+    private func registerSupplementaryViews() {
+        gameCollectionView.register(
+            SectionHeaderView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: SectionHeaderView.identifier
+        )
+    }
+    
+    private func setupDataSource() {
+        gameCollectionView.dataSource = self
+    }
+    
+    private func addCollectionViewToView() {
+        view.addSubview(gameCollectionView)
+    }
+    
     
     private func createLayout() -> UICollectionViewLayout {
         return UICollectionViewCompositionalLayout { sectionIndex, _ in
@@ -80,31 +78,10 @@ final class GamesViewController: UIViewController {
                 section = self.createChipsSection()
             case .nowAvaliable:
                 section = self.featuredBannerSection()
-            case .mustPlay, .moreGames:
-                section = self.gameListSection()
-            case .appleArcadeGames:
-                section = self.gameListSection()
-            case .topFreeGames:
-                section = self.gameListSection()
-            case .topPaidGames:
-                section = self.gameListSection()
-            case .basedOnYourDownloads:
-                section = self.gameListSection()
-            case .exploreMoreGames:
+            case .mustPlay, .moreGames, .appleArcadeGames, .topFreeGames, .topPaidGames, .basedOnYourDownloads, .exploreMoreGames :
                 section = self.gameListSection()
             case .events:
                 section = self.eventSection()
-            }
-            
-            
-            if sectionType == .mustPlay || sectionType == .moreGames {
-                let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                                        heightDimension: .absolute(40))
-                let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
-                    layoutSize: headerSize,
-                    elementKind: UICollectionView.elementKindSectionHeader,
-                    alignment: .top)
-                section.boundarySupplementaryItems = [sectionHeader]
             }
             
             return section
@@ -129,7 +106,7 @@ final class GamesViewController: UIViewController {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.97), heightDimension: .fractionalHeight(1.0))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.92), heightDimension: .absolute(200))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.92), heightDimension: .estimated(260))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
@@ -157,12 +134,12 @@ final class GamesViewController: UIViewController {
         group.interItemSpacing = .fixed(16)
         
         let section = NSCollectionLayoutSection(group: group)
-        section.orthogonalScrollingBehavior = .continuous
+        section.orthogonalScrollingBehavior = .groupPaging
         section.interGroupSpacing = 16
-        section.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 8, bottom: 16, trailing: 8)
+        section.contentInsets = NSDirectionalEdgeInsets(top: 4, leading: 8, bottom: 16, trailing: 8)
         
         
-        let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(40))
+        let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(30))
         let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: headerSize,
             elementKind: UICollectionView.elementKindSectionHeader,
@@ -177,7 +154,7 @@ final class GamesViewController: UIViewController {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.97), heightDimension: .fractionalHeight(1.0))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.92), heightDimension: .absolute(200))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.92), heightDimension: .absolute(240))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
@@ -210,23 +187,23 @@ extension GamesViewController: UICollectionViewDataSource {
         case .categoryChips:
             return gamesViewModel.categories.count
         case .nowAvaliable:
-            return featureViewModel.featuredGames.count
+            return gamesViewModel.featuredGames.count
         case .mustPlay:
-            return gamesInfoViewModel.mustPlayGames.count
+            return gamesViewModel.mustPlayGames.count
         case .moreGames:
-            return gamesInfoViewModel.moreGames.count
+            return gamesViewModel.moreGames.count
         case .appleArcadeGames:
-            return gamesInfoViewModel.appleArcadeGames.count
+            return gamesViewModel.appleArcadeGames.count
         case .topFreeGames:
-            return gamesInfoViewModel.topFreeGames.count
+            return gamesViewModel.topFreeGames.count
         case .topPaidGames:
-            return gamesInfoViewModel.moreGames.count
+            return gamesViewModel.moreGames.count
         case .basedOnYourDownloads:
-            return gamesInfoViewModel.moreGames.count
+            return gamesViewModel.moreGames.count
         case .exploreMoreGames:
-            return gamesInfoViewModel.moreGames.count
+            return gamesViewModel.moreGames.count
         case .events:
-            return eventViewModel.events.count
+            return gamesViewModel.events.count
         }
     }
     
@@ -242,52 +219,50 @@ extension GamesViewController: UICollectionViewDataSource {
             return cell
         case .nowAvaliable:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FeaturedBannerCell.identifier, for: indexPath) as! FeaturedBannerCell
-            let game = featureViewModel.featuredGames[indexPath.item]
+            let game = gamesViewModel.featuredGames[indexPath.item]
             cell.configure(with: game)
             return cell
         case .mustPlay:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GameCell.identifier, for: indexPath) as! GameCell
-            let game = gamesInfoViewModel.mustPlayGames[indexPath.item]
+            let game = gamesViewModel.mustPlayGames[indexPath.item]
             cell.configure(with: game)
             return cell
         case .moreGames:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GameCell.identifier, for: indexPath) as! GameCell
-            let game = gamesInfoViewModel.moreGames[indexPath.item]
+            let game = gamesViewModel.moreGames[indexPath.item]
             cell.configure(with: game)
             return cell
         case .appleArcadeGames:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GameCell.identifier, for: indexPath) as! GameCell
-            let game = gamesInfoViewModel.appleArcadeGames[indexPath.item]
+            let game = gamesViewModel.appleArcadeGames[indexPath.item]
             cell.configure(with: game)
             return cell
         case .topFreeGames:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GameCell.identifier, for: indexPath) as! GameCell
-            let game = gamesInfoViewModel.topFreeGames[indexPath.item]
+            let game = gamesViewModel.topFreeGames[indexPath.item]
             cell.configure(with: game)
             return cell
         case .topPaidGames:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GameCell.identifier, for: indexPath) as! GameCell
-            let game = gamesInfoViewModel.topPaidGames[indexPath.item]
+            let game = gamesViewModel.topPaidGames[indexPath.item]
             cell.configure(with: game)
             return cell
         case .basedOnYourDownloads:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GameCell.identifier, for: indexPath) as! GameCell
-            let game = gamesInfoViewModel.basedOnYourDownloads[indexPath.item]
+            let game = gamesViewModel.basedOnYourDownloads[indexPath.item]
             cell.configure(with: game)
             return cell
         case .exploreMoreGames:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GameCell.identifier, for: indexPath) as! GameCell
-            let game = gamesInfoViewModel.exploreMoreGames[indexPath.item]
+            let game = gamesViewModel.exploreMoreGames[indexPath.item]
             cell.configure(with: game)
             return cell
             
-            
         case .events:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: EventCell.identifier, for: indexPath) as! EventCell
-            let event = eventViewModel.events[indexPath.item]
+            let event = gamesViewModel.events[indexPath.item]
             cell.configure(with: event)
             return cell
-            
             
         }
     }
@@ -305,29 +280,8 @@ extension GamesViewController: UICollectionViewDataSource {
             for: indexPath
         ) as! SectionHeaderView
         
-        let title: String
-        switch GamesSection(rawValue: indexPath.section) {
-        case .mustPlay:
-            title = "Must-Play Games"
-        case .moreGames:
-            title = "More Games You Might Like"
-        case .appleArcadeGames:
-            title = "Apple Arcade Games for you"
-        case .topFreeGames:
-            title = "Top Free Games"
-        case .topPaidGames:
-            title = "Top Paid Games"
-        case .basedOnYourDownloads:
-            title = "Based On Your Downloads"
-        case .exploreMoreGames:
-            title = "Explore More Games"
-            
-        case .events:
-            title = "Events You Might Like"
-        default:
-            title = ""
-        }
         
+        let title = GamesSection(rawValue: indexPath.section)?.title ?? ""
         header.configure(title: title)
         return header
     }

@@ -1,12 +1,17 @@
 
-
-final class GamesViewModel {
-    let categories: [CategoryModel] = [
-        CategoryModel(title: "Trivia", iconName: "tag"),
-        CategoryModel(title: "Adventure", iconName: "tag"),
-        CategoryModel(title: "Racing", iconName: "checkerboard.rectangle"),
-        CategoryModel(title: "Board", iconName: "tag"),
-        CategoryModel(title: "Card", iconName: "tag"),
-        CategoryModel(title: "AR Games", iconName: "tag")
-    ]
+class GamesViewModel{
+    
+    let categories = CategoryModel.categories
+    
+    let featuredGames = FeaturedGame.featuredGames
+    
+    let mustPlayGames           = Game.mustPlayGames
+    let moreGames               = Game.moreGames
+    let appleArcadeGames        = Game.appleArcadeGames
+    let topFreeGames            = Game.topFreeGames
+    let topPaidGames            = Game.topPaidGames
+    let exploreMoreGames        = Game.exploreMoreGames
+    let basedOnYourDownloads    = Game.basedOnYourDownloads
+    
+    let events = EventModel.events
 }

@@ -1,11 +1,9 @@
 
-
 import UIKit
 
 class CategoryChipCell: UICollectionViewCell {
     
     static let reuseID = "CategoryChipCell"
-    
     
     private let containerView: UIView = {
         let view = UIView()
@@ -14,18 +12,16 @@ class CategoryChipCell: UICollectionViewCell {
         return view
     }()
     
-    private let label: UILabel = {
+    private let categoryLabel: UILabel = {
         let label = UILabel()
-        
         label.textAlignment = .left
         label.font = .systemFont(ofSize: 14, weight: .medium)
         return label
     }()
     
-    private let iconView: UIImageView = {
+    private let categoryIcon: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = .black
         return imageView
     }()
     
@@ -37,48 +33,53 @@ class CategoryChipCell: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         if Bundle.main.path(forResource: "Main", ofType: "storyboardc") != nil {
-            
             print("Main.storyboard in the Bundle")
-            
         } else{
             print("Main.storyboard Not in the Bundle")
             return nil
         }
-        
         super.init(coder: coder)
     }
     
     private func setupUI() {
+        addSubviews()
+        setupConstraints()
+    }
+
+    private func addSubviews() {
         contentView.addSubview(containerView)
-        containerView.addSubview(iconView)
-        containerView.addSubview(label)
-        
+        containerView.addSubview(categoryIcon)
+        containerView.addSubview(categoryLabel)
+    }
+
+    private func setupConstraints() {
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        iconView.translatesAutoresizingMaskIntoConstraints = false
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
+        categoryIcon.translatesAutoresizingMaskIntoConstraints = false
+        categoryLabel.translatesAutoresizingMaskIntoConstraints = false
+
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: contentView.topAnchor),
             containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             
-            iconView.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-            iconView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
-            iconView.widthAnchor.constraint(equalToConstant: 18),
-            iconView.heightAnchor.constraint(equalToConstant: 18),
+            categoryIcon.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            categoryIcon.leadingAnchor.constraint(equalTo: containerView.leadingAnchor, constant: 8),
+            categoryIcon.widthAnchor.constraint(equalToConstant: 18),
+            categoryIcon.heightAnchor.constraint(equalToConstant: 18),
             
-            label.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
-            label.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 5),
-            label.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8)
+            categoryLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor),
+            categoryLabel.leadingAnchor.constraint(equalTo: categoryIcon.trailingAnchor, constant: 5),
+            categoryLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8)
         ])
     }
+
     
     func configure(with catgory:CategoryModel) {
-        label.text = catgory.title
+        categoryLabel.text = catgory.title
         
         if let iconName = catgory.iconName {
-            iconView.image = UIImage(systemName: iconName)
+            categoryIcon.image = iconName
             
         }
     }
