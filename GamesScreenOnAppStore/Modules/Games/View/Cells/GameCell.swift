@@ -1,27 +1,35 @@
+
 import UIKit
 
+// MARK: - GameCell
+
 class GameCell: UICollectionViewCell {
+    
+    // MARK: - Identifier
+    
     static let identifier = "GameCell"
     
+    // MARK: - UI Components
+
     private lazy var gameImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.layer.cornerRadius = 18
+        imageView.layer.cornerRadius = 12
         imageView.clipsToBounds = true
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
     private lazy var gameLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 16)
+        label.font = .boldSystemFont(ofSize: 16)
         label.numberOfLines = 2
         return label
     }()
     
     private lazy var gameSubtitleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 13)
+        label.font = .systemFont(ofSize: 13)
         label.textColor = .gray
         return label
     }()
@@ -33,7 +41,7 @@ class GameCell: UICollectionViewCell {
         config.cornerStyle = .capsule
         config.contentInsets = NSDirectionalEdgeInsets(top: 6, leading: 12, bottom: 6, trailing: 12)
         config.imagePadding = 4
-        
+
         let button = UIButton(type: .system)
         button.configuration = config
         button.setContentHuggingPriority(.required, for: .horizontal)
@@ -41,6 +49,8 @@ class GameCell: UICollectionViewCell {
         return button
     }()
     
+    // MARK: - Initializers
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
@@ -50,6 +60,8 @@ class GameCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Setup Methods
+
     private func setupViews() {
         let labelsStackView = UIStackView(arrangedSubviews: [gameLabel, gameSubtitleLabel])
         labelsStackView.axis = .vertical
@@ -63,8 +75,8 @@ class GameCell: UICollectionViewCell {
         contentView.addSubview(itemStackView)
         
         NSLayoutConstraint.activate([
-            gameImageView.widthAnchor.constraint(equalToConstant: 70),
-            gameImageView.heightAnchor.constraint(equalToConstant: 70),
+            gameImageView.widthAnchor.constraint(equalToConstant: 60),
+            gameImageView.heightAnchor.constraint(equalToConstant: 60),
             itemStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             itemStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             itemStackView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
@@ -72,6 +84,8 @@ class GameCell: UICollectionViewCell {
         ])
     }
     
+    // MARK: - Configuration
+
     func configure(with game: Game) {
         gameLabel.text = game.title
         gameSubtitleLabel.text = game.subtitle
@@ -101,6 +115,8 @@ class GameCell: UICollectionViewCell {
         actionButton.configuration = config
     }
 
+    // MARK: - Helpers
+
     private func resizeImage(named name: String, to size: CGSize) -> UIImage? {
         guard let image = UIImage(named: name) else { return nil }
         let renderer = UIGraphicsImageRenderer(size: size)
@@ -109,3 +125,4 @@ class GameCell: UICollectionViewCell {
         }
     }
 }
+

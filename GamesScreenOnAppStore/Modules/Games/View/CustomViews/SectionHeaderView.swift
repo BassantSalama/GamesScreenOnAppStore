@@ -1,8 +1,10 @@
 
-
 import UIKit
 
 class SectionHeaderView: UICollectionReusableView {
+    
+    // MARK: - Properties
+    
     static let identifier = "SectionHeaderView"
     
     private let titleLabel: UILabel = {
@@ -17,6 +19,8 @@ class SectionHeaderView: UICollectionReusableView {
         return imageView
     }()
     
+    // MARK: - Initializers
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
@@ -26,6 +30,8 @@ class SectionHeaderView: UICollectionReusableView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Setup
+    
     private func setupView() {
         let stack = UIStackView(arrangedSubviews: [titleLabel, chevronImageView])
         stack.axis = .horizontal
@@ -34,12 +40,14 @@ class SectionHeaderView: UICollectionReusableView {
         stack.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(stack)
+        
         NSLayoutConstraint.activate([
-          
             stack.topAnchor.constraint(equalTo: topAnchor),
             stack.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
+    
+    // MARK: - Configuration
     
     func configure(title: String) {
         titleLabel.text = title

@@ -1,9 +1,15 @@
 
 import UIKit
 
+// MARK: - CategoryChipCell
+
 class CategoryChipCell: UICollectionViewCell {
     
+    // MARK: - Reuse Identifier
+    
     static let reuseID = "CategoryChipCell"
+    
+    // MARK: - UI Components
     
     private let containerView: UIView = {
         let view = UIView()
@@ -25,21 +31,24 @@ class CategoryChipCell: UICollectionViewCell {
         return imageView
     }()
     
+    // MARK: - Initializers
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
     }
     
-    
     required init?(coder: NSCoder) {
         if Bundle.main.path(forResource: "Main", ofType: "storyboardc") != nil {
             print("Main.storyboard in the Bundle")
-        } else{
+        } else {
             print("Main.storyboard Not in the Bundle")
             return nil
         }
         super.init(coder: coder)
     }
+    
+    // MARK: - Setup Methods
     
     private func setupUI() {
         addSubviews()
@@ -73,14 +82,11 @@ class CategoryChipCell: UICollectionViewCell {
             categoryLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor, constant: -8)
         ])
     }
-
     
-    func configure(with catgory:CategoryModel) {
-        categoryLabel.text = catgory.title
-        
-        if let iconName = catgory.iconName {
-            categoryIcon.image = iconName
-            
-        }
+    // MARK: - Configuration
+    
+    func configure(with category: CategoryModel) {
+        categoryLabel.text = category.title
+        categoryIcon.image = category.iconName
     }
 }

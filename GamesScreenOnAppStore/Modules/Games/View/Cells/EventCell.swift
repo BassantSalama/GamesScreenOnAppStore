@@ -1,9 +1,16 @@
 
 import UIKit
 
+// MARK: - EventCell
+
 class EventCell: UICollectionViewCell {
+    
+    // MARK: - Identifier
+
     static let identifier = "EventCell"
     
+    // MARK: - UI Components
+
     private let happeningNow: UILabel = {
         let label = UILabel()
         label.text = "HAPPENING NOW"
@@ -22,7 +29,6 @@ class EventCell: UICollectionViewCell {
         return imageView
     }()
 
-    
     private let overlayView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.black.withAlphaComponent(0.35)
@@ -64,14 +70,34 @@ class EventCell: UICollectionViewCell {
         return stack
     }()
     
+    // MARK: - Initializers
+
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+        setupViews()
+        setupConstraints()
+    }
+
+    required init?(coder: NSCoder) {
+        if Bundle.main.path(forResource: "Main", ofType: "storyboardc") != nil {
+            print("Main.storyboard in the Bundle")
+        } else {
+            print("Main.storyboard Not in the Bundle")
+            return nil
+        }
+        super.init(coder: coder)
+    }
+
+    // MARK: - Setup Methods
+
+    private func setupViews() {
         contentView.addSubview(happeningNow)
         contentView.addSubview(bannerImageView)
         bannerImageView.addSubview(overlayView)
         overlayView.addSubview(textStackView)
-        
+    }
+
+    private func setupConstraints() {
         NSLayoutConstraint.activate([
             happeningNow.topAnchor.constraint(equalTo: contentView.topAnchor),
             happeningNow.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 6),
@@ -92,17 +118,9 @@ class EventCell: UICollectionViewCell {
             textStackView.trailingAnchor.constraint(lessThanOrEqualTo: overlayView.trailingAnchor, constant: -12)
         ])
     }
-    
-    required init?(coder: NSCoder) {
-        if Bundle.main.path(forResource: "Main", ofType: "storyboardc") != nil {
-            print("Main.storyboard in the Bundle")
-        } else{
-            print("Main.storyboard Not in the Bundle")
-            return nil
-        }
-        super.init(coder: coder)
-    }
-    
+
+    // MARK: - Configuration
+
     func configure(with event: EventModel) {
         bannerImageView.image = event.bannerImage
         titleLabel.text = event.title
